@@ -1,0 +1,38 @@
+/* Dark mode background for the entire page */
+body {
+	background-color: #1a1a1a !important; /* Dark background color for the whole page */
+	color: #ffffff; /* White text color */
+}
+
+/* Navbar background color */
+.navbar {
+	background-color: #343a40 !important; /* Override Bootstrap's default color */
+}
+
+/* Styling for the navbar brand */
+.navbar-brand {
+	color: #ffffff !important; /* Text color for the brand */
+}
+
+/* Styling for the navbar links */
+.navbar-nav .nav-link {
+	color: #ffffff !important; /* Text color for the links */
+}
+
+/* Navbar toggle button color (for mobile) */
+.navbar-toggler-icon {
+	background-color: #ffffff; /* Color for the hamburger icon */
+}
+/* Add custom CSS for card spacing */
+.card {
+	margin-bottom: 24px;
+}
+
+/* Add CSS for highlighting high bid and low ask cards */
+.high-bid {
+	background-color: #8B0000!important; /* Red background for high bid */
+}
+
+.low-ask {
+	background-color: #006400!important; /* Green background for low ask */
+}

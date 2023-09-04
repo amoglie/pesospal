@@ -6,6 +6,8 @@
     <title>PesosPal</title>
     <!-- Add Bootstrap CSS link -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Link to your custom style.css -->
+    <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -27,42 +29,8 @@
     <!-- Main Content -->
     <div class="container mt-4">
         <h1>Welcome to PesosPal</h1>
-        <div class="row">
-            <div class="col-md-6">
-                <!-- Display Currency Rates -->
-                <div class="card">
-                    <div class="card-header">
-                        Currency Rates
-                    </div>
-                    <div class="card-body">
-                        <!-- You can use JavaScript to populate this section with currency data -->
-                        <p class="card-text">USD to ARS: $XXX</p>
-                        <p class="card-text">EUR to ARS: $XXX</p>
-                        <!-- Add more currency rates as needed -->
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <!-- Currency Converter Form -->
-                <div class="card">
-                    <div class="card-header">
-                        Currency Converter
-                    </div>
-                    <div class="card-body">
-                        <form>
-                            <div class="form-group">
-                                <label for="amount">Amount (USD)</label>
-                                <input type="number" class="form-control" id="amount" placeholder="Enter amount">
-                            </div>
-                            <div class="form-group">
-                                <label for="convertedAmount">Converted Amount (ARS)</label>
-                                <input type="text" class="form-control" id="convertedAmount" readonly>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Convert</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+        <div id="card-container" class="row py-4">
+            <!-- Cards will be added here dynamically -->
         </div>
     </div>
 
@@ -73,30 +41,90 @@
 
     <!-- Your custom JavaScript for fetching and displaying currency data -->
     <script>
-        const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1kPPyPzZci_n1c6yKy7MOjM4lzyCb0mJwA1-oCcaFua0/edit#gid=347191800';
+        // Define the array of URLs for fetching data
+        const usdtUrls = [
+            { url: "https://criptoya.com/api/lemoncash/usdt/ars/0.1", name: "LemonCash", comisionCompra: "1%", comisionVenta: "0.5%" },
+            { url: "https://criptoya.com/api/belo/usdt/ars/0.1", name: "Belo", comisionCompra: "0%", comisionVenta: "0%" },
+            { url: "https://criptoya.com/api/buenbit/usdt/ars/0.1", name: "BuenBit", comisionCompra: "0%", comisionVenta: "0%" },
+            { url: "https://criptoya.com/api/letsbit/usdt/ars/0.1", name: "LetsBit", comisionCompra: "0%", comisionVenta: "0%" },
+            { url: "https://criptoya.com/api/tiendacrypto/usdt/ars/0.1", name: "TiendaCrypto", comisionCompra: "0%", comisionVenta: "0%" },
+            { url: "https://criptoya.com/api/fiwind/usdt/ars/0.1", name: "Fiwind", comisionCompra: "0%", comisionVenta: "0%" }
+        ];
 
-        async function fetchData() {
-            try {
-                const response = await fetch(GOOGLE_SHEET_URL);
-                const data = await response.json();
+        // Function to create and append card elements for each entry
+        async function createCards() {
+            const cardContainer = document.querySelector('#card-container');
+            let highestBid = Number.NEGATIVE_INFINITY; // Initialize to lowest possible value
+            let lowestAsk = Number.POSITIVE_INFINITY; // Initialize to highest possible value
+            let highestBidCard, lowestAskCard; // Variables to store the corresponding card elements
 
-                // Process and display the data here
-                console.log(data);
+            for (const usdt of usdtUrls) {
+                try {
+                    const response = await fetch(usdt.url);
+                    const data = await response.json();
 
-                // Update the currency rates in the card
-                document.querySelector('.card-text:nth-child(1)').textContent = `USD to ARS: $${data.usdToArs}`;
-                document.querySelector('.card-text:nth-child(2)').textContent = `EUR to ARS: $${data.eurToArs}`;
-                // Add more currency rates as needed
+                    // Create a new card element
+                    const card = document.createElement('div');
+                    card.className = 'card bg-dark text-white m-3';
+                    const timestamp = new Date(data.time * 1000).toLocaleString(); // Convert timestamp to human-readable date
+                    card.innerHTML = `
+                        <div class="card-body">
+                            <h5 class="card-title">${usdt.name}</h5>
+                            <p class="card-text">Venta: $${data.ask || 'N/A'}</p>
+                            <p class="card-text">Compra: $${data.bid || 'N/A'}</p>
+                            <p class="card-text">Fecha: ${timestamp}</p>
+                            <p class="card-text">Comisión Compra: ${usdt.comisionCompra}</p>
+                            <p class="card-text">Comisión Venta: ${usdt.comisionVenta}</p>
+                            <p class="card-text card-message"> ${usdt.comisionVenta}</p>
+                        </div>
+                    `;
 
-            } catch (error) {
-                console.error('Error fetching data:', error);
+                    // Highlight cards with highest bid and lowest ask
+                    if (data.bid > highestBid) {
+                        if (highestBidCard) {
+                            highestBidCard.classList.remove('high-bid');
+                            highestBidCard.querySelector('.card-message').textContent = highestBidCard.querySelector('.card-message').textContent.replace(' ✅ mejor precio de compra', '');
+                        }
+                        highestBid = data.bid;
+                        highestBidCard = card;
+                        highestBidCard.classList.add('high-bid');
+                        highestBidCard.querySelector('.card-message').textContent += ' ✅ mejor precio de compra';
+                    }
+                    if (data.ask < lowestAsk) {
+                        if (lowestAskCard) {
+                            lowestAskCard.classList.remove('low-ask');
+                            lowestAskCard.querySelector('.card-message').textContent = lowestAskCard.querySelector('.card-message').textContent.replace(' ✅ mejor precio de venta', '');
+                        }
+                        lowestAsk = data.ask;
+                        lowestAskCard = card;
+                        lowestAskCard.classList.add('low-ask');
+                        lowestAskCard.querySelector('.card-message').textContent += ' ✅ mejor precio de venta';
+                    }
+
+                    // Append the card to the card container
+                    cardContainer.appendChild(card);
+                } catch (error) {
+                    console.error(`Error fetching data for ${usdt.name}:`, error);
+                }
             }
+
+            // Sort the cards based on the Bid price in descending order
+            const cards = Array.from(cardContainer.querySelectorAll('.card'));
+            cards.sort((a, b) => {
+                const bidA = parseFloat(a.querySelector('.card-text:nth-child(3)').textContent.replace('Compra: $', '').replace('N/A', '-1'));
+                const bidB = parseFloat(b.querySelector('.card-text:nth-child(3)').textContent.replace('Compra: $', '').replace('N/A', '-1'));
+                return bidB - bidA;
+            });
+
+            // Clear the card container and append the sorted cards
+            cardContainer.innerHTML = '';
+            cards.forEach((card) => {
+                cardContainer.appendChild(card);
+            });
         }
 
-        // Call the fetchData function when the page loads
-        window.addEventListener('load', fetchData);
-
-        // Add JavaScript code for currency conversion here
+        // Call the createCards function when the page loads
+        window.addEventListener('load', createCards);
     </script>
 </body>
 </html>
