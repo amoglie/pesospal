@@ -30,9 +30,9 @@ body {
 
 /* Add CSS for highlighting high bid and low ask cards */
 .high-bid {
-	background-color: #8B0000!important; /* Red background for high bid */
+	background-color: #5a189a!important; /* Red background for high bid */
 }
 
 .low-ask {
-	background-color: #006400!important; /* Green background for low ask */
+	background-color: #5a189a!important; /* Green background for low ask */
 }

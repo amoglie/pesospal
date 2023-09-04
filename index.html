@@ -29,6 +29,10 @@
     <!-- Main Content -->
     <div class="container mt-4">
         <h1>Welcome to PesosPal</h1>
+
+        <!-- Add a refresh button -->
+        <button id="refresh-button" class="btn btn-primary">Refresh Data</button>
+
         <div id="card-container" class="row py-4">
             <!-- Cards will be added here dynamically -->
         </div>
@@ -123,8 +127,22 @@
             });
         }
 
+        // Function to refresh data when the button is clicked
+        function refreshData() {
+            // Clear the card container
+            const cardContainer = document.querySelector('#card-container');
+            cardContainer.innerHTML = '';
+
+            // Call createCards to fetch and display updated data
+            createCards();
+        }
+
         // Call the createCards function when the page loads
         window.addEventListener('load', createCards);
+
+        // Add an event listener to the refresh button
+        const refreshButton = document.querySelector('#refresh-button');
+        refreshButton.addEventListener('click', refreshData);
     </script>
 </body>
 </html>
