@@ -73,13 +73,18 @@
                     const timestamp = new Date(data.time * 1000).toLocaleString(); // Convert timestamp to human-readable date
                     card.innerHTML = `
                         <div class="card-body">
-                            <h5 class="card-title">${usdt.name}</h5>
-                            <p class="card-text">Venta: $${data.ask || 'N/A'}</p>
-                            <p class="card-text">Compra: $${data.bid || 'N/A'}</p>
-                            <p class="card-text">Fecha: ${timestamp}</p>
-                            <p class="card-text">Comisión Compra: ${usdt.comisionCompra}</p>
-                            <p class="card-text">Comisión Venta: ${usdt.comisionVenta}</p>
-                            <p class="card-text card-message"> ${usdt.comisionVenta}</p>
+                            <h5 class="card-title empresa">${usdt.name}</h5>
+                            <hr>
+                            <p class="card-text venta">Venta: $${data.ask || 'N/A'}</p>
+                            <p class="card-text compra">Compra: $${data.bid || 'N/A'}</p>
+                            <p class="card-text fecha">Fecha: ${timestamp}</p>
+                            <p class="card-text comisioncompra">Comisión Compra: ${usdt.comisionCompra}</p>
+                            <p class="card-text comisionventa">Comisión Venta: ${usdt.comisionVenta}</p>
+                            <hr>
+                            <small class="fecha">Fecha: ${timestamp}</small>
+                            <br>
+                            <small class="card-message"></small>
+
                         </div>
                     `;
 

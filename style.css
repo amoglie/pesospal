@@ -36,3 +36,19 @@ body {
 .low-ask {
 	background-color: #5a189a!important; /* Green background for low ask */
 }
+
+
+
+.card-message
+{
+	font-size: 12px;
+	font-style: italic;
+	color:#cacaca!important;
+}
+
+.fecha
+{
+	font-size: 12px;
+	font-style: italic;
+	color:#cacaca!important;
+}
